@@ -2,6 +2,8 @@ import streamlit as st
 import requests
 import pandas as pd
 
+BASE_URL = "http://127.0.0.1:8000"  # FastAPI base URL
+
 st.title("ML Model Training & Prediction")
 
 # Upload Dataset & Train Model
@@ -13,7 +15,7 @@ if st.button("Train Model"):
     if uploaded_file is not None:
         files = {"file": uploaded_file.getvalue()}
         data = {"model_name": model_choice}
-        response = requests.post("/train/", files=files, data=data)
+        response = requests.post(f"{BASE_URL}/train/", files=files, data=data)
         if response.status_code == 200:
             st.success(f"Model trained successfully! Metrics: {response.json()['metrics']}")
         else:
@@ -29,7 +31,7 @@ if st.button("Predict"):
     if input_values:
         try:
             input_list = [float(x) for x in input_values.split(",")]
-            response = requests.post("/predict/", json={"features": input_list})
+            response = requests.post(f"{BASE_URL}/predict/", json={"features": input_list})
             if response.status_code == 200:
                 st.success(f"Prediction: {response.json()['prediction']}")
             else:
